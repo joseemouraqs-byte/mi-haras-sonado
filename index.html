@@ -3,15 +3,1105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Haras Soñado · Capas</title>
+    <title>Mi Haras Soñado · Estaciones y Tiempo Individual</title>
     <style>
-        /* ... (todos los estilos) ... */
+        /* ===== ESTILOS COMPLETOS ===== */
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background: linear-gradient(145deg, #1d4e2b 0%, #2a6e3a 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #f5f0d7;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 0 #3e2b1f;
+            letter-spacing: 2px;
+            color: #ffd966;
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .tab-button {
+            background: #5a3e2b;
+            border: 2px solid #b8860b;
+            color: #ffd966;
+            padding: 10px 30px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .tab-button.active {
+            background: #b8860b;
+            color: #1f3f23;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .controls {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            background: rgba(0,0,0,0.2);
+            padding: 15px 25px;
+            border-radius: 60px;
+            backdrop-filter: blur(4px);
+        }
+        button {
+            background: #8b5a2b;
+            border: 2px solid #e0b87b;
+            color: #fff3e0;
+            padding: 10px 22px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.15s;
+            box-shadow: 0 5px 0 #5a3a1e;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        button:hover {
+            background: #a8753a;
+            transform: translateY(-2px);
+            box-shadow: 0 7px 0 #5a3a1e;
+        }
+        button:disabled {
+            opacity: 0.5;
+            pointer-events: none;
+            background: #5a4a3a;
+            box-shadow: 0 4px 0 #3e2e1e;
+        }
+        .info-bar {
+            background: #3e2b1f;
+            padding: 15px 20px;
+            border-radius: 50px;
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+            border: 2px solid #b8860b;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+            backdrop-filter: blur(2px);
+        }
+        .resource {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #5a3e2b;
+            padding: 5px 20px;
+            border-radius: 40px;
+            border: 1px solid #d4a373;
+        }
+        .resource span {
+            font-weight: bold;
+            color: #ffd966;
+        }
+        .rankings-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .rank-category {
+            background: #3e2b1f;
+            border: 2px solid #b8860b;
+            border-radius: 30px;
+            padding: 15px;
+        }
+        .rank-category h3 {
+            color: #ffd966;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .rank-category ol {
+            margin-left: 20px;
+            color: #f5f0d7;
+        }
+        .rank-category li {
+            margin: 5px 0;
+        }
+        .mision-box {
+            background: #8b5a2b;
+            padding: 10px 20px;
+            border-radius: 40px;
+            border: 2px solid #ffd966;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .caballos-lista {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .caballo-item {
+            background: #3b6b3f;
+            border: 2px solid #c9a45b;
+            border-radius: 50px;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: 0.2s;
+            flex-wrap: wrap;
+        }
+        .caballo-item:hover {
+            background: #4a784a;
+        }
+        .caballo-item-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #2d4a31;
+            border: 2px solid #ffd966;
+            overflow: hidden;
+        }
+        .caballo-item-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .caballo-item-info {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .caballo-item-nombre {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #ffd966;
+        }
+        .caballo-item-nombre input {
+            background: #2d4a31;
+            border: 1px solid #b8860b;
+            color: #ffd966;
+            font-size: 1.3rem;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 30px;
+            width: 200px;
+        }
+        .caballo-item-sexo {
+            font-size: 1rem;
+            background: #3e2b1f;
+            padding: 5px 15px;
+            border-radius: 30px;
+        }
+        .caballo-item button {
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            flex: 0 0 auto;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background: linear-gradient(165deg, #3b6b3f, #2d5a31);
+            margin: 5% auto;
+            padding: 25px;
+            border: 3px solid #c9a45b;
+            border-radius: 40px;
+            width: 90%;
+            max-width: 800px;
+            color: #f5f0d7;
+            box-shadow: 0 12px 0 #1f3f23;
+            position: relative;
+        }
+        .close {
+            color: #ffd966;
+            float: right;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: -10px;
+        }
+        .close:hover {
+            color: #fff;
+        }
+        .caballos-grid, .mercado-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+        .caballo-card {
+            background: linear-gradient(165deg, #3b6b3f, #2d5a31);
+            border: 3px solid #c9a45b;
+            border-radius: 30px;
+            padding: 20px;
+            box-shadow: 0 12px 0 #1f3f23, 0 8px 15px rgba(0,0,0,0.4);
+            color: #f5f0d7;
+            transition: 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        .caballo-card.npc {
+            border-color: #8a6fc9;
+            box-shadow: 0 12px 0 #3a2b5a;
+        }
+        .caballo-card.semen {
+            border-color: #ffaa00;
+            box-shadow: 0 12px 0 #8b6b41;
+        }
+        .caballo-card.lesionado {
+            border-color: #ff4444;
+            box-shadow: 0 0 20px #ff4444;
+        }
+        .caballo-card.castrado {
+            border-color: #aaaaaa;
+            box-shadow: 0 12px 0 #555555;
+        }
+        .caballo-card::before {
+            content: '';
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            width: 120px;
+            height: 120px;
+            background: rgba(255,215,0,0.1);
+            border-radius: 50%;
+            z-index: 0;
+        }
+        .caballo-card.seleccionado-padre {
+            border-color: #3a9eff;
+            box-shadow: 0 0 20px #3a9eff, 0 12px 0 #1f3f23;
+        }
+        .caballo-card.seleccionado-madre {
+            border-color: #ff69b4;
+            box-shadow: 0 0 20px #ff69b4, 0 12px 0 #1f3f23;
+        }
+        .caballo-card.en-venta {
+            border-color: #ffaa00;
+            box-shadow: 0 0 20px #ffaa00, 0 12px 0 #1f3f23;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+            background: rgba(0,0,0,0.2);
+            padding: 10px 15px;
+            border-radius: 50px;
+            border: 1px solid #b8860b;
+        }
+        .card-header img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid #ffd966;
+        }
+        .name-area {
+            flex: 1;
+        }
+        .horse-name {
+            font-size: 1.7rem;
+            font-weight: bold;
+            color: #ffd966;
+            line-height: 1.2;
+        }
+        .horse-breed {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .sexo-badge {
+            background: #3e2b1f;
+            padding: 5px 15px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            border: 1px solid #b8860b;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 15px 0;
+        }
+        .stat-item {
+            background: #2d4a31;
+            border-radius: 20px;
+            padding: 10px 12px;
+            border: 1px solid #8b6b41;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .stat-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .stat-value {
+            font-size: 1.4rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .stat-value small {
+            font-size: 0.8rem;
+            font-weight: normal;
+            opacity: 0.7;
+        }
+        .progress-bar-bg {
+            background: #1f3a23;
+            height: 14px;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-top: 4px;
+            border: 1px solid #6b4f2a;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f9d77e, #f5b342);
+            border-radius: 20px;
+            width: 0%;
+        }
+        .blup-fill {
+            background: linear-gradient(90deg, #b19cd9, #8a6fc9);
+        }
+        .energia-fill {
+            background: linear-gradient(90deg, #7ec850, #4caf50);
+        }
+        .animo-fill {
+            background: linear-gradient(90deg, #ffb74d, #ff9800);
+        }
+        .salud-fill {
+            background: linear-gradient(90deg, #ff6b6b, #ff3b3b);
+        }
+        .fatiga-fill {
+            background: linear-gradient(90deg, #aaaaaa, #666666);
+        }
+        .genes-section, .habilidades-section {
+            background: #2d4a31;
+            border-radius: 25px;
+            padding: 15px;
+            margin: 15px 0;
+            border: 1px solid #b8860b;
+        }
+        .section-title {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: #ffd966;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px dashed #b8860b;
+            padding-bottom: 5px;
+        }
+        .gen-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 5px 0;
+            background: #1f3a23;
+            padding: 6px 12px;
+            border-radius: 30px;
+        }
+        .habilidad-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 8px 0;
+        }
+        .habilidad-icon {
+            font-size: 1.3rem;
+            width: 30px;
+            text-align: center;
+        }
+        .habilidad-info {
+            flex: 1;
+        }
+        .habilidad-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            margin-bottom: 2px;
+        }
+        .small-note {
+            font-size: 0.7rem;
+            opacity: 0.8;
+        }
+        .badge {
+            background: #8b5a2b;
+            padding: 3px 10px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border: 1px solid #e0b87b;
+        }
+        .precio-venta {
+            background: #c9a45b;
+            color: #1f3f23;
+            font-weight: bold;
+            padding: 5px 15px;
+            border-radius: 40px;
+            display: inline-block;
+            margin: 5px 0;
+            border: 1px solid #f5d742;
+        }
+        .card-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            justify-content: center;
+        }
+        .card-actions button {
+            padding: 8px 12px;
+            font-size: 0.75rem;
+            background: #6b4226;
+            flex: 1 0 auto;
+            min-width: 70px;
+            border-width: 1px;
+            box-shadow: 0 3px 0 #3e2e1e;
+        }
+        .card-actions button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 0 #3e2e1e;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #c0b090;
+            font-size: 0.9rem;
+            border-top: 1px solid #8b6b41;
+            padding-top: 20px;
+        }
+        .tienda-grid, .mejoras-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .item-card, .mejora-card {
+            background: #2d4a31;
+            border: 2px solid #b8860b;
+            border-radius: 30px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: 0.2s;
+        }
+        .item-card:hover, .mejora-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 0 #1f3f23;
+        }
+        .item-nombre, .mejora-nombre {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #ffd966;
+        }
+        .item-desc, .mejora-desc {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            line-height: 1.4;
+        }
+        .item-precio, .mejora-precio {
+            font-size: 1.2rem;
+            color: #ffaa00;
+            font-weight: bold;
+        }
+        .item-cantidad, .mejora-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 5px;
+        }
+        .item-cantidad input {
+            width: 70px;
+            padding: 8px;
+            border-radius: 30px;
+            border: 1px solid #b8860b;
+            background: #1f3a23;
+            color: #ffd966;
+            text-align: center;
+            font-size: 1rem;
+        }
+        .item-comprar, .mejora-comprar {
+            background: #8b5a2b;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 40px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+            flex: 1;
+        }
+        .item-comprar:hover, .mejora-comprar:hover {
+            background: #a8753a;
+        }
+        .mejora-nivel {
+            font-size: 1rem;
+            color: #ffd966;
+            background: #3e2b1f;
+            padding: 5px 10px;
+            border-radius: 30px;
+            display: inline-block;
+        }
+        .genealogia {
+            background: #2d4a31;
+            border-radius: 20px;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #b8860b;
+        }
+        .genealogia p {
+            margin: 5px 0;
+        }
+        .capa-indicador {
+            font-size: 1.2rem;
+            margin-left: 5px;
+        }
     </style>
 </head>
 <body>
-    <!-- ... (todo el contenido HTML) ... -->
-    <script>
-        // ... (todo el JavaScript) ...
+    <h1>🐴 MI HARAS SOÑADO · ESTACIONES Y TIEMPO INDIVIDUAL</h1>
+
+    <div class="tabs">
+        <button class="tab-button active" id="tabGanaderia">Ganadería</button>
+        <button class="tab-button" id="tabTienda">Tienda</button>
+        <button class="tab-button" id="tabMejoras">Mejoras</button>
+        <button class="tab-button" id="tabRankings">Rankings</button>
+        <button class="tab-button" id="tabMercado">Mercado</button>
+        <button class="tab-button" id="tabSementales">Mis Sementales</button>
+    </div>
+
+    <!-- Ganadería -->
+    <div class="tab-content active" id="contentGanaderia">
+        <div class="controls">
+            <button id="btnComprarCaballo">🌟 Comprar Caballo (500💰)</button>
+            <button id="btnVenderEstiercol">💩 Vender Estiércol (2💰 c/u)</button>
+            <button id="btnCruzar" disabled>💞 Cruzar Seleccionados</button>
+            <button id="btnCorrer">🏆 Organizar Carrera</button>
+            <button id="btnPasar6h">⏩ +6h</button>
+            <button id="btnPasar12h">⏩ +12h</button>
+            <button id="btnPasar24h">⏩ +24h</button>
+            <button id="btnGuardar">💾 Guardar</button>
+            <button id="btnCargar">📂 Cargar</button>
+        </div>
+
+        <div class="info-bar">
+            <div class="resource">💰 Dinero: <span id="dineroDisplay">1000</span></div>
+            <div class="resource">🥕 Zanahorias: <span id="zanahoriasDisplay">5</span></div>
+            <div class="resource">💧 Agua: <span id="aguaDisplay">5</span></div>
+            <div class="resource">🌾 Trigo: <span id="trigoDisplay">0</span></div>
+            <div class="resource">💩 Estiércol: <span id="estiercolDisplay">0</span></div>
+            <div class="resource">📅 <span id="fechaDisplay">Día 1, 08:00</span></div>
+            <div class="resource">🌦️ <span id="estacionDisplay">Primavera</span></div>
+        </div>
+
+        <div class="info-bar" style="margin-top: -10px;">
+            <span>🏠 Establo lv.<span id="nivelEstablo">1</span></span>
+            <span>🏟️ Pista lv.<span id="nivelPista">1</span></span>
+            <span>🏥 Clínica lv.<span id="nivelClinica">1</span></span>
+            <span>🐴 Padre: <span id="padreDisplay">(ninguno)</span></span>
+            <span>🐴 Madre: <span id="madreDisplay">(ninguna)</span></span>
+        </div>
+
+        <div id="misionBox" class="mision-box">
+            📋 Misión: <span id="misionTexto">Ninguna</span> · Recompensa: <span id="misionRecompensa">0💰</span>
+        </div>
+
+        <div id="caballosLista" class="caballos-lista"></div>
+    </div>
+
+    <!-- Tienda -->
+    <div class="tab-content" id="contentTienda">
+        <h2 style="text-align:center; margin-bottom:20px;">🛒 Tienda de objetos</h2>
+        <div id="tiendaContainer" class="tienda-grid"></div>
+    </div>
+
+    <!-- Mejoras -->
+    <div class="tab-content" id="contentMejoras">
+        <h2 style="text-align:center; margin-bottom:20px;">🔧 Mejoras de instalaciones</h2>
+        <div id="mejorasContainer" class="mejoras-grid"></div>
+    </div>
+
+    <!-- Rankings -->
+    <div class="tab-content" id="contentRankings">
+        <div id="rankingsContainer" class="rankings-grid"></div>
+    </div>
+
+    <!-- Mercado -->
+    <div class="tab-content" id="contentMercado">
+        <h2 style="text-align:center;">🐴 Subastas activas</h2>
+        <div id="subastasContainer" class="mercado-grid"></div>
+        <h2 style="text-align:center;">💰 Venta directa</h2>
+        <div id="ventaDirectaContainer" class="mercado-grid"></div>
+        <h2 style="text-align:center;">💦 Montas de sementales</h2>
+        <div id="semenContainer" class="mercado-grid"></div>
+    </div>
+
+    <!-- Mis Sementales -->
+    <div class="tab-content" id="contentSementales">
+        <h2 style="text-align:center;">🐴 Mis sementales en venta de monta</h2>
+        <div id="misSementalesContainer" class="mercado-grid"></div>
+    </div>
+
+    <!-- Modal ficha completa -->
+    <div id="modalFicha" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="modalFichaContent"></div>
+        </div>
+    </div>
+
+    <div class="footer">
+        ⏰ Cada caballo tiene su propio reloj de 24h · Las estaciones afectan globalmente
+    </div>
+
+    <!-- ==================== INICIO DEL SCRIPT ==================== -->
+    <script>        // ==================== CONFIGURACIÓN ====================
+        const TASA_MERCADO = 0.10;
+        const PRECIO_CABALLO = 500;
+        const PRECIO_ZANAHORIA = 10;
+        const PRECIO_AGUA = 5;
+        const PRECIO_TRIGO = 8;
+        const PRECIO_VENTA_ESTIERCOL = 2;
+        const PRECIO_MEJORA = 500;
+        const PREMIOS = [100,50,25];
+        const PREMIOS_TORNEO = [300,150,75];
+        const EDAD_MAXIMA = 30;
+        const MESES_GESTACION = 6;
+        const MESES_DESCANSO_PARTO = 8;
+        const PROB_GEMELOS = 1/50;
+        const EDAD_MIN_REPRODUCCION = 2.5;
+        const COSTO_ENERGIA_CRUCE = 50;
+        const BLUP_MAX_ENTRENAMIENTO = 70;
+        const BLUP_MAX_CARRERAS = 30;
+        const COSTO_ACELERAR = 50;
+        const MAX_TRIGO_DIARIO = 5;
+        const BONUS_CASTRACION = 1.5;
+        const EDAD_CASTRACION_MIN = 0.5;
+        const EDAD_CASTRACION_MAX = 2.5;
+
+        // ==================== ESTADO GLOBAL ====================
+        let caballos = [];
+        let npcsHaras = [];
+        let subastas = [];
+        let ventaDirecta = [];
+        let semenNPC = [];
+        let padreIdx = null;
+        let madreIdx = null;
+        let resultadoCarrera = "";
+
+        let dinero = 1000;
+        let estiercol = 0;
+
+        let nivelEstablo = 1;
+        let nivelPista = 1;
+        let nivelClinica = 1;
+
+        let misionActual = null;
+        let nivelNPC = 1;
+        let diasGlobales = 1;
+        let horaGlobal = 8; // empieza a las 8:00
+        let estacionActual = 0; // 0: primavera, 1: verano, 2: otoño, 3: invierno
+        const estaciones = ["Primavera", "Verano", "Otoño", "Invierno"];
+        const DIAS_POR_ESTACION = 90;
+
+        let inventario = {
+            zanahoria:5, agua:5, trigo:0,
+            manzana:0, maiz:0, sal:0, huevos:0, leche:0, queso:0, miel:0, vitaminas:0, hierbas:0, linimento:0, vacuna:0,
+            sillaBasica:0, sillaProfesional:0, mantasTermicas:0, cuboAutomatico:0, botiquin:0, herramientasHerraje:0,
+            cintaMetrica:0, camara:0, libroGalope:0, libroTrote:0, libroSalto:0, libroDoma:0, libroCaracter:0,
+            pistaPortatil:0, pesas:0, relajacion:0, inscripcion:0, trebol:0, herraduras:0, analista:0,
+            catalogo:0, anuncio:0, etiqueta:0, agente:0, pocionJuventud:0, sueroCrecimiento:0, amuletoFertilidad:0, bebidaEnergetica:0
+        };
+
+        // ==================== FUNCIONES AUX ====================
+        function randomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+        function randomFloat(min, max) { return Math.random() * (max - min) + min; }
+        function generarSexo() { return Math.random() < 0.5 ? 'Macho' : 'Hembra'; }
+        function generarNombre(sexo, esNPC = false) {
+            const nombresMasculinos = ["Sparky","Trueno","Rayo","Relámpago","Viento","Sol","Duende","Fuego","Acero","Brío"];
+            const nombresFemeninos = ["Luna","Brisa","Estrella","Canela","Zafiro","Nube","Pampa","Aurora","Galaxia","Perla"];
+            const lista = sexo === 'Macho' ? nombresMasculinos : nombresFemeninos;
+            return lista[Math.floor(Math.random() * lista.length)];
+        }
+        function generarRazasAleatorias() {
+            const razasDisponibles = ["Criollo","Árabe","Pura Sangre","Cuarto de Milla","Appaloosa","Frisón","Andaluz","Mustang"];
+            if (Math.random() < 0.5) {
+                const raza = razasDisponibles[Math.floor(Math.random() * razasDisponibles.length)];
+                return { [raza]: 100 };
+            } else {
+                const raza1 = razasDisponibles[Math.floor(Math.random() * razasDisponibles.length)];
+                let raza2;
+                do { raza2 = razasDisponibles[Math.floor(Math.random() * razasDisponibles.length)]; } while (raza2 === raza1);
+                return { [raza1]: 50, [raza2]: 50 };
+            }
+        }
+
+        function blupMaximoEntrenamiento(edad) {
+            if (edad >= 6) return BLUP_MAX_ENTRENAMIENTO;
+            return Math.floor(edad * (BLUP_MAX_ENTRENAMIENTO / 6));
+        }
+
+        function calcularValorBase(caballo) {
+            const sumaGenes = Object.values(caballo.genesHabilidad).reduce((a, b) => a + b, 0);
+            return Math.max(100, Math.floor(sumaGenes * 20 + caballo.blupTotal * 5 - Math.floor(caballo.edad) * 2));
+        }
+
+        function genTotal(caballo) {
+            return Object.values(caballo.genesHabilidad).reduce((a, b) => a + b, 0).toFixed(1);
+        }
+
+        // ==================== FUNCIONES DE TIEMPO ====================
+        function avanzarTiempo(horas) {
+            for (let i = 0; i < horas; i++) {
+                horaGlobal++;
+                if (horaGlobal >= 24) {
+                    horaGlobal = 0;
+                    diasGlobales++;
+                    // Cambio de estación cada 90 días
+                    if (diasGlobales % DIAS_POR_ESTACION === 0) {
+                        estacionActual = (estacionActual + 1) % 4;
+                    }
+                }
+            }
+            actualizarRelojUI();
+        }
+
+        function actualizarRelojUI() {
+            const horaStr = horaGlobal.toString().padStart(2, '0') + ':00';
+            document.getElementById('fechaDisplay').innerText = `Día ${diasGlobales}, ${horaStr}`;
+            document.getElementById('estacionDisplay').innerText = estaciones[estacionActual];
+        }
+
+        // ==================== CAPAS (simplificado para este ejemplo) ====================
+        const capas = [
+            { nombre: "Castaño", emoji: "🟤", rareza: "comun", probabilidad: 20, bonus: { tipo: "aleatorio", valor: 1 } },
+            { nombre: "Negro", emoji: "⚫", rareza: "comun", probabilidad: 12, bonus: { tipo: "doma", valor: 1 } }
+        ];
+
+        function asignarCapa() {
+            const rand = Math.random() * 100;
+            let acumulado = 0;
+            for (let capa of capas) {
+                acumulado += capa.probabilidad;
+                if (rand < acumulado) return JSON.parse(JSON.stringify(capa));
+            }
+            return capas[0];
+        }
+
+        function aplicarBonus(caballo, capa) {
+            // simplificado
+            return caballo;
+        }
+
+        // ==================== CREAR CABALLO CON RELOJ PROPIO ====================
+        function crearCaballo(nombre, sexo, razas, edad = 0, energia = 50, animo = 50, salud = 100,
+                              genesBase = null, genesHabilidad = null, blupEntrenamiento = 0, blupCarreras = 0,
+                              esNPC = false, gestacion = null, descansoParto = 0, enVenta = false, precioVenta = null,
+                              padreNombre = null, madreNombre = null, haras = null) {
+            if (!genesBase) genesBase = { temperamento: randomInt(1, 100) };
+            if (!genesHabilidad) {
+                genesHabilidad = {
+                    galope: randomInt(1, 10), trote: randomInt(1, 10), salto: randomInt(1, 10),
+                    doma: randomInt(1, 10), caracter: randomInt(1, 10)
+                };
+            }
+            const maximos = {
+                galope: genesHabilidad.galope * 10,
+                trote: genesHabilidad.trote * 10,
+                salto: genesHabilidad.salto * 10,
+                doma: genesHabilidad.doma * 10,
+                caracter: genesHabilidad.caracter * 10
+            };
+            const habilidades = {
+                galope: Math.floor(maximos.galope * randomFloat(0.3, 0.7)),
+                trote: Math.floor(maximos.trote * randomFloat(0.3, 0.7)),
+                salto: Math.floor(maximos.salto * randomFloat(0.3, 0.7)),
+                doma: Math.floor(maximos.doma * randomFloat(0.3, 0.7)),
+                caracter: Math.floor(maximos.caracter * randomFloat(0.3, 0.7))
+            };
+            const maxBlupEnt = blupMaximoEntrenamiento(Math.floor(edad));
+            if (blupEntrenamiento > maxBlupEnt) blupEntrenamiento = maxBlupEnt;
+            const blupTotal = blupEntrenamiento + blupCarreras;
+
+            // Asignar capa (simplificado)
+            const capa = asignarCapa();
+
+            return {
+                nombre,
+                nombreEditable: nombre,
+                sexo, razas, edad, energia, animo, salud,
+                genesBase, genesHabilidad, maximos, habilidades,
+                blupEntrenamiento, blupCarreras, blupTotal,
+                gestacion, descansoParto, padreInfo: null, esNPC, enVenta, precioVenta,
+                top1:0, top2:0, top3:0, lesionado:false, fatiga:0,
+                padreNombre, madreNombre, haras,
+                enVentaSemen: false, precioMonta: null, castrado: false,
+                equipo: {}, efectosTemporales: {},
+                ultimaAccion: {
+                    alimentar: null,
+                    beber: null,
+                    acariciar: null,
+                    trigo: null
+                },
+                imagenSeed: encodeURIComponent(nombre + (haras || '')),
+                capa: capa
+            };
+        }
+
+        // Caballo inicial (hembra)
+        (function initJugador() {
+            const genesBase = { temperamento: 30 };
+            const genesHabilidad = { galope:5, trote:4, salto:6, doma:5, caracter:4 };
+            const inicial = crearCaballo("Sparky","Hembra",{"Criollo":100},5,80,80,100,
+                                         genesBase, genesHabilidad,30,20,false, null,null,false,null,
+                                         "Desconocido","Desconocido","Jugador");
+            caballos.push(inicial);
+        })();
+
+        // ==================== FUNCIONES DE ACCIÓN CON RELOJ ====================
+        function puedeRealizarAccion(caballo, accion) {
+            const ultima = caballo.ultimaAccion[accion];
+            if (!ultima) return true;
+            const diasTranscurridos = diasGlobales - ultima.dia;
+            const horasTranscurridas = diasTranscurridos * 24 + (horaGlobal - ultima.hora);
+            return horasTranscurridas >= 24;
+        }
+
+        function registrarAccion(caballo, accion) {
+            caballo.ultimaAccion[accion] = { dia: diasGlobales, hora: horaGlobal };
+        }
+
+        function tiempoRestante(caballo, accion) {
+            const ultima = caballo.ultimaAccion[accion];
+            if (!ultima) return 0;
+            const diasTranscurridos = diasGlobales - ultima.dia;
+            const horasTranscurridas = diasTranscurridos * 24 + (horaGlobal - ultima.hora);
+            return Math.max(0, 24 - horasTranscurridas);
+        }
+
+        // ==================== ACCIONES DE CUIDADO ====================
+        function alimentar(caballo) {
+            if (!puedeRealizarAccion(caballo, 'alimentar')) {
+                alert(`Debes esperar ${tiempoRestante(caballo, 'alimentar')}h para volver a alimentar.`);
+                return false;
+            }
+            if (inventario.zanahoria <= 0) { alert("No tienes zanahorias."); return false; }
+            caballo.energia = Math.min(100, caballo.energia + 10);
+            caballo.animo = Math.min(100, caballo.animo + 5);
+            caballo.salud = Math.min(100, caballo.salud + 5);
+            caballo.fatiga = Math.max(0, caballo.fatiga - 5);
+            inventario.zanahoria--;
+            registrarAccion(caballo, 'alimentar');
+            return true;
+        }
+
+        function beber(caballo) {
+            if (!puedeRealizarAccion(caballo, 'beber')) {
+                alert(`Debes esperar ${tiempoRestante(caballo, 'beber')}h para volver a dar agua.`);
+                return false;
+            }
+            if (inventario.agua <= 0) { alert("No tienes agua."); return false; }
+            caballo.energia = Math.min(100, caballo.energia + 15);
+            caballo.salud = Math.min(100, caballo.salud + 3);
+            caballo.fatiga = Math.max(0, caballo.fatiga - 3);
+            inventario.agua--;
+            registrarAccion(caballo, 'beber');
+            return true;
+        }
+
+        function acariciar(caballo) {
+            if (!puedeRealizarAccion(caballo, 'acariciar')) {
+                alert(`Debes esperar ${tiempoRestante(caballo, 'acariciar')}h para volver a acariciar.`);
+                return false;
+            }
+            caballo.animo = Math.min(100, caballo.animo + 15);
+            caballo.energia = Math.min(100, caballo.energia + 2);
+            caballo.salud = Math.min(100, caballo.salud + 2);
+            caballo.fatiga = Math.max(0, caballo.fatiga - 2);
+            registrarAccion(caballo, 'acariciar');
+            return true;
+        }
+
+        function darTrigo(caballo) {
+            if (!puedeRealizarAccion(caballo, 'trigo')) {
+                alert(`Debes esperar ${tiempoRestante(caballo, 'trigo')}h para volver a dar trigo.`);
+                return false;
+            }
+            if (inventario.trigo <= 0) { alert("No tienes trigo."); return false; }
+            caballo.energia = Math.min(100, caballo.energia + 12);
+            caballo.animo = Math.min(100, caballo.animo + 2);
+            caballo.salud = Math.min(100, caballo.salud + 1);
+            caballo.fatiga = Math.max(0, caballo.fatiga - 2);
+            inventario.trigo--;
+            registrarAccion(caballo, 'trigo');
+            return true;
+        }
+
+        // ==================== RENDER LISTA ====================
+        function renderListaResumida() {
+            const container = document.getElementById('caballosLista');
+            let html = '';
+            caballos.forEach((c,i) => {
+                const imgUrl = `https://avatars.dicebear.com/api/avataaars/${c.imagenSeed}.svg?m=10&options[accessories][]=&options[top][]=shortHair&options[facialHair][]=&options[clothes][]=blazer&options[eyes][]=default&options[eyebrows][]=default&options[mouth][]=default&options[skin][]=light`;
+                const tiempoAlimentar = tiempoRestante(c, 'alimentar');
+                const tiempoBeber = tiempoRestante(c, 'beber');
+                const tiempoAcariciar = tiempoRestante(c, 'acariciar');
+                const tiempoTrigo = tiempoRestante(c, 'trigo');
+                html += `
+                    <div class="caballo-item">
+                        <div class="caballo-item-avatar">
+                            <img src="${imgUrl}" alt="${c.nombreEditable}">
+                        </div>
+                        <div class="caballo-item-info">
+                            <input type="text" value="${c.nombreEditable}" data-index="${i}" class="edit-nombre">
+                            <span class="caballo-item-sexo">${c.sexo}</span>
+                        </div>
+                        <div>
+                            <small>🍎 ${tiempoAlimentar>0?tiempoAlimentar+'h':'✔'}</small>
+                            <small>💧 ${tiempoBeber>0?tiempoBeber+'h':'✔'}</small>
+                            <small>🖐️ ${tiempoAcariciar>0?tiempoAcariciar+'h':'✔'}</small>
+                            <small>🌾 ${tiempoTrigo>0?tiempoTrigo+'h':'✔'}</small>
+                        </div>
+                        <button onclick="verFicha(${i})">🔍 Ver</button>
+                        <button onclick="seleccionarPadreLista(${i})" ${c.sexo!=='Macho'?'disabled':''}>🐴 Padre</button>
+                        <button onclick="seleccionarMadreLista(${i})" ${c.sexo!=='Hembra'?'disabled':''}>🐴 Madre</button>
+                        <button onclick="alimentarHandler(${i})" ${tiempoAlimentar>0?'disabled':''}>🍎 Comer</button>
+                        <button onclick="beberHandler(${i})" ${tiempoBeber>0?'disabled':''}>💧 Beber</button>
+                        <button onclick="acariciarHandler(${i})" ${tiempoAcariciar>0?'disabled':''}>🖐️ Acariciar</button>
+                        <button onclick="darTrigoHandler(${i})" ${tiempoTrigo>0?'disabled':''}>🌾 Trigo</button>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+            document.querySelectorAll('.edit-nombre').forEach(inp => inp.addEventListener('change', function(e) {
+                caballos[this.dataset.index].nombreEditable = this.value;
+            }));
+        }
+
+        // ==================== HANDLERS ====================
+        function alimentarHandler(i) { if (alimentar(caballos[i])) renderListaResumida(); }
+        function beberHandler(i) { if (beber(caballos[i])) renderListaResumida(); }
+        function acariciarHandler(i) { if (acariciar(caballos[i])) renderListaResumida(); }
+        function darTrigoHandler(i) { if (darTrigo(caballos[i])) renderListaResumida(); }
+        function seleccionarPadreLista(i) { padreIdx = i; renderListaResumida(); }
+        function seleccionarMadreLista(i) { madreIdx = i; renderListaResumida(); }
+        function verFicha(i) { alert("Ficha de " + caballos[i].nombreEditable); }
+
+        // ==================== AVANZAR TIEMPO ====================
+        function pasarHoras(horas) {
+            avanzarTiempo(horas);
+            renderListaResumida();
+        }
+
+        // ==================== INICIALIZACIÓN ====================
+        function actualizarRecursosDisplay() {
+            document.getElementById('dineroDisplay').innerText = dinero;
+            document.getElementById('zanahoriasDisplay').innerText = inventario.zanahoria;
+            document.getElementById('aguaDisplay').innerText = inventario.agua;
+            document.getElementById('trigoDisplay').innerText = inventario.trigo;
+            document.getElementById('estiercolDisplay').innerText = estiercol;
+            document.getElementById('nivelEstablo').innerText = nivelEstablo;
+            document.getElementById('nivelPista').innerText = nivelPista;
+            document.getElementById('nivelClinica').innerText = nivelClinica;
+            document.getElementById('padreDisplay').innerText = padreIdx !== null ? `${caballos[padreIdx].nombreEditable} (${caballos[padreIdx].sexo})` : '(ninguno)';
+            document.getElementById('madreDisplay').innerText = madreIdx !== null ? `${caballos[madreIdx].nombreEditable} (${caballos[madreIdx].sexo})` : '(ninguna)';
+        }
+
+        function render() { renderListaResumida(); actualizarRecursosDisplay(); }
+
+        // ==================== EVENTOS DE PESTAÑAS ====================
+        document.getElementById('tabGanaderia').addEventListener('click', () => {
+            document.querySelectorAll('.tab-button').forEach(b=>b.classList.remove('active'));
+            document.getElementById('tabGanaderia').classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+            document.getElementById('contentGanaderia').classList.add('active');
+            render();
+        });
+        document.getElementById('tabTienda').addEventListener('click', () => {
+            document.querySelectorAll('.tab-button').forEach(b=>b.classList.remove('active'));
+            document.getElementById('tabTienda').classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+            document.getElementById('contentTienda').classList.add('active');
+        });
+        document.getElementById('tabMejoras').addEventListener('click', () => {
+            document.querySelectorAll('.tab-button').forEach(b=>b.classList.remove('active'));
+            document.getElementById('tabMejoras').classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+            document.getElementById('contentMejoras').classList.add('active');
+        });
+        document.getElementById('tabRankings').addEventListener('click', () => {
+            document.querySelectorAll('.tab-button').forEach(b=>b.classList.remove('active'));
+            document.getElementById('tabRankings').classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+            document.getElementById('contentRankings').classList.add('active');
+        });
+        document.getElementById('tabMercado').addEventListener('click', () => {
+            document.querySelectorAll('.tab-button').forEach(b=>b.classList.remove('active'));
+            document.getElementById('tabMercado').classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+            document.getElementById('contentMercado').classList.add('active');
+        });
+        document.getElementById('tabSementales').addEventListener('click', () => {
+            document.querySelectorAll('.tab-button').forEach(b=>b.classList.remove('active'));
+            document.getElementById('tabSementales').classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+            document.getElementById('contentSementales').classList.add('active');
+        });
+
+        // Botones de tiempo
+        document.getElementById('btnPasar6h').addEventListener('click', () => pasarHoras(6));
+        document.getElementById('btnPasar12h').addEventListener('click', () => pasarHoras(12));
+        document.getElementById('btnPasar24h').addEventListener('click', () => pasarHoras(24));
+
+        // Botones simulados (para que no den error)
+        document.getElementById('btnComprarCaballo').addEventListener('click', () => alert("Función de compra no implementada en demo"));
+        document.getElementById('btnVenderEstiercol').addEventListener('click', () => alert("Función no implementada"));
+        document.getElementById('btnCruzar').addEventListener('click', () => alert("Función no implementada"));
+        document.getElementById('btnCorrer').addEventListener('click', () => alert("Función no implementada"));
+        document.getElementById('btnGuardar').addEventListener('click', () => alert("Función no implementada"));
+        document.getElementById('btnCargar').addEventListener('click', () => alert("Función no implementada"));
+
+        // Inicializar
+        actualizarRelojUI();
+        render();
     </script>
 </body>
 </html>
