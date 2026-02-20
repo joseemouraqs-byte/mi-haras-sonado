@@ -94,4 +94,164 @@
         <h2>Top 10 Nacional</h2>
         <table id="ranking-table">
             <thead><tr><th>Pos</th><th>Dueño</th><th>Dinero</th><th>Caballos</th></tr></thead>
-            <tbody>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+// [SISTEMA 4 - DATOS DE CAPAS CON COLORES E ICONOS]
+const COATS = [
+    { n: "Castaño", r: "Común", ch: 30, color: "#6d4c41", icon: "🐴" },
+    { n: "Negro", r: "Común", ch: 30, color: "#212121", icon: "🐴" },
+    { n: "Palomino", r: "Rara", ch: 20, color: "#ffb300", icon: "🐴" },
+    { n: "Blanco Puro", r: "Legendaria", ch: 15, color: "#f5f5f5", icon: "🦄" },
+    { n: "Atigrado", r: "Mítica", ch: 5, color: "#ff7043", icon: "🐅" }
+];
+
+const SHOP = [
+    { id: 'carrots', name: 'Zanahorias', price: 20, icon: '🥕' },
+    { id: 'water', name: 'Agua Fresca', price: 10, icon: '💧' }
+];
+
+// [SISTEMA 5 - ESTADO DEL JUEGO]
+let game = {
+    money: 2000,
+    inventory: { carrots: 5, water: 5 },
+    totalHours: 8,
+    horses: [],
+    npcs: []
+};
+
+// Inicializar NPCs para el ranking
+for(let i=1; i<=20; i++) {
+    game.npcs.push({ name: "Criador " + i, money: Math.floor(Math.random()*4000), horses: Math.floor(Math.random()*5)+1 });
+}
+
+// [SISTEMA 6 - LÓGICA DE CABALLOS Y ACCIONES]
+function createHorse(name = "Caballo") {
+    let rand = Math.random() * 100, cum = 0, coat = COATS[0];
+    for(let c of COATS) { cum += c.ch; if(rand <= cum) { coat = c; break; } }
+
+    return {
+        id: Date.now(),
+        name: name + " " + (game.horses.length + 1),
+        sex: Math.random() > 0.5 ? "Macho ♂️" : "Hembra ♀️",
+        coat: coat.n, rarity: coat.r, color: coat.color, icon: coat.icon,
+        energy: 100, health: 100,
+        genes: { galope: Math.floor(Math.random()*10)+1 },
+        lastFed: -24 // Horas
+    };
+}
+
+function advanceWorldTime(h) {
+    game.totalHours += h;
+    game.horses.forEach(horse => { horse.energy = Math.min(100, horse.energy + (h * 1.5)); });
+    updateUI();
+}
+
+function feedHorse(id) {
+    let h = game.horses.find(x => x.id === id);
+    if(game.inventory.carrots > 0 && (game.totalHours - h.lastFed) >= 24) {
+        game.inventory.carrots--;
+        h.energy = Math.min(100, h.energy + 20);
+        h.lastFed = game.totalHours;
+        updateUI();
+    }
+}
+
+function buyHorse() { if(game.money >= 500) { game.money -= 500; game.horses.push(createHorse("Rayo")); updateUI(); } }
+function buyItem(id, price) { if(game.money >= price) { game.money -= price; game.inventory[id]++; updateUI(); } }
+
+function runRace(id) {
+    let h = game.horses.find(x => x.id === id);
+    if(h.energy < 30) return alert("¡No tiene suficiente energía! (Requiere 30%)");
+    
+    h.energy -= 30;
+    let score = h.genes.galope + Math.random()*5;
+    let pos = score > 10 ? 1 : (score > 7 ? 2 : (score > 4 ? 3 : 4));
+    let prize = pos === 1 ? 500 : (pos === 2 ? 200 : (pos === 3 ? 100 : 0));
+    
+    game.money += prize;
+    document.getElementById('race-results').innerText = `¡Quedaste en posición ${pos}! Ganaste $${prize}.`;
+    updateUI();
+}
+
+// [SISTEMA 7 - UI VISUAL]
+function updateUI() {
+    // Top Bar
+    document.getElementById('m-money').innerText = game.money;
+    document.getElementById('m-carrots').innerText = game.inventory.carrots;
+    document.getElementById('m-water').innerText = game.inventory.water;
+    document.getElementById('m-date').innerText = "Día " + (Math.floor(game.totalHours/24)+1);
+    document.getElementById('m-time').innerText = (game.totalHours%24) + ":00h";
+
+    // Ganadería (AVATARES AQUÍ)
+    const list = document.getElementById('horse-list');
+    const raceList = document.getElementById('race-horse-list');
+    list.innerHTML = ''; raceList.innerHTML = '';
+
+    game.horses.forEach(h => {
+        let cd = Math.max(0, 24 - (game.totalHours - h.lastFed));
+        let cardHTML = `
+            <div class="horse-header">
+                <div class="avatar" style="background-color:${h.color};">${h.icon}</div>
+                <div>
+                    <strong>${h.name}</strong> <small>${h.sex}</small><br>
+                    <small>Capa: ${h.coat} (${h.rarity})</small>
+                </div>
+            </div>
+            <div style="margin-top:10px; font-size:0.9em;">
+                ⚡ Energía: ${Math.floor(h.energy)}% <div class="stat-bar"><div class="fill" style="width:${h.energy}%; background:var(--p-gold)"></div></div>
+            </div>
+        `;
+        
+        // Carta para Pestaña Ganadería
+        list.innerHTML += `<div class="horse-card rarity-${h.rarity}">
+            ${cardHTML}
+            <div class="btn-group" style="margin-top:10px">
+                <button class="action-btn" onclick="feedHorse(${h.id})" ${cd > 0 || game.inventory.carrots == 0 ? 'disabled' : ''}>
+                    🥕 ${cd > 0 ? Math.ceil(cd)+'h' : 'Alimentar'}
+                </button>
+            </div>
+        </div>`;
+
+        // Carta para Pestaña Carreras
+        raceList.innerHTML += `<div class="horse-card rarity-${h.rarity}">
+            ${cardHTML}
+            <button class="action-btn" style="margin-top:10px; background:var(--p-brown)" onclick="runRace(${h.id})">🏇 Competir (-30% Energía)</button>
+        </div>`;
+    });
+
+    // Tienda
+    const shopDiv = document.getElementById('shop-list');
+    if(shopDiv.innerHTML === "") {
+        SHOP.forEach(i => {
+            shopDiv.innerHTML += `<div style="background:white; padding:15px; border-radius:8px; text-align:center;">
+                <div style="font-size:30px">${i.icon}</div> <h3>${i.name}</h3> <p>$${i.price}</p>
+                <button class="action-btn" onclick="buyItem('${i.id}', ${i.price})">Comprar</button>
+            </div>`;
+        });
+    }
+
+    // Rankings
+    let all = [...game.npcs, { name: "TÚ (Jugador)", money: game.money, horses: game.horses.length }];
+    all.sort((a,b) => b.money - a.money);
+    document.querySelector('#ranking-table tbody').innerHTML = all.slice(0,10).map((o, i) => `
+        <tr style="${o.name.includes('TÚ') ? 'background:#fff9c4; font-weight:bold;' : ''}">
+            <td>${i+1}</td><td>${o.name}</td><td>$${Math.floor(o.money)}</td><td>${o.horses}</td>
+        </tr>
+    `).join('');
+}
+
+function changeTab(id) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+}
+
+updateUI();
+</script>
+</body>
+</html>
