@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Haras Soñado · Estaciones y Tiempo Individual</title>
+    <title>Mi Haras Soñado · Completo</title>
     <style>
         /* ===== ESTILOS COMPLETOS ===== */
         * {
@@ -597,7 +597,7 @@
     </style>
 </head>
 <body>
-    <h1>🐴 MI HARAS SOÑADO · ESTACIONES Y TIEMPO INDIVIDUAL</h1>
+    <h1>🐴 MI HARAS SOÑADO · VERSIÓN COMPLETA</h1>
 
     <div class="tabs">
         <button class="tab-button active" id="tabGanaderia">Ganadería</button>
@@ -689,12 +689,11 @@
     </div>
 
     <div class="footer">
-        ⏰ Cada caballo tiene su propio reloj de 24h · Las estaciones afectan globalmente
+        🎨 Capas únicas · ⏰ Tiempo individual por caballo · 🌦️ Estaciones · 🏆 Rankings · 💰 Mercado completo
     </div>
 
-    <!-- ==================== INICIO DEL SCRIPT ==================== -->
     <script>
-                // ==================== CONFIGURACIÓN ====================
+        // ==================== CONFIGURACIÓN ====================
         const TASA_MERCADO = 0.10;
         const PRECIO_CABALLO = 500;
         const PRECIO_ZANAHORIA = 10;
@@ -718,6 +717,92 @@
         const EDAD_CASTRACION_MIN = 0.5;
         const EDAD_CASTRACION_MAX = 2.5;
 
+        // Listas de nombres
+        const nombresMasculinos = ["Sparky","Trueno","Rayo","Relámpago","Viento","Sol","Duende","Fuego","Acero","Brío","Tempestad","Huracán","Tornado","Ciclón","Vendaval"];
+        const nombresFemeninos = ["Luna","Brisa","Estrella","Canela","Zafiro","Nube","Pampa","Aurora","Galaxia","Perla","Cielo","Mar","Rosa","Lila","Violeta"];
+        const nombresHaras = ["Rancho El Ombú","Haras La Quebrada","Cabaña Don Pedro","Stud El Alfalfar","Haras San Jacinto","La Posta","El Trébol","Los Alazanes"];
+        const razasDisponibles = ["Criollo","Árabe","Pura Sangre","Cuarto de Milla","Appaloosa","Frisón","Andaluz","Mustang"];
+
+        // ==================== CAPAS ====================
+        const capas = [
+            { nombre: "Castaño", emoji: "🟤", rareza: "comun", probabilidad: 20, bonus: { tipo: "aleatorio", valor: 1 } },
+            { nombre: "Negro", emoji: "⚫", rareza: "comun", probabilidad: 12, bonus: { tipo: "doma", valor: 1 } },
+            { nombre: "Sabino", emoji: "🐎", rareza: "comun", probabilidad: 8, bonus: { tipo: "aleatorio2", valor: 1 } },
+            { nombre: "Palomino", emoji: "🟡", rareza: "rara", probabilidad: 8, bonus: { tipo: "galope", valor: 2 } },
+            { nombre: "Tordo", emoji: "⚪", rareza: "rara", probabilidad: 6, bonus: { tipo: "doma", valor: 2, secundario: "caracter", valor2: 1 } },
+            { nombre: "Baya (Cremello)", emoji: "🐎", rareza: "rara", probabilidad: 5, bonus: { tipo: "temperamento", valor: 2 } },
+            { nombre: "Roano (Ruano)", emoji: "🐎", rareza: "rara", probabilidad: 5, bonus: { tipo: "aleatorio", valor: 2 } },
+            { nombre: "Isabelo", emoji: "🐎", rareza: "rara", probabilidad: 4, bonus: { tipo: "temperamento", valor: 2 } },
+            { nombre: "Alazán", emoji: "🔴", rareza: "epica", probabilidad: 5, bonus: { tipo: "galope", valor: 3, secundario: "resistencia", valor2: 2 } },
+            { nombre: "Overo", emoji: "🎯", rareza: "epica", probabilidad: 4, bonus: { tipo: "salto", valor: 3, secundario: "trote", valor2: 2 } },
+            { nombre: "Perlino", emoji: "🐎", rareza: "epica", probabilidad: 3, bonus: { tipo: "doma", valor: 3, secundario: "caracter", valor2: 2 } },
+            { nombre: "Grulla", emoji: "🐎", rareza: "epica", probabilidad: 3, bonus: { tipo: "galope", valor: 3 } },
+            { nombre: "Pinto (Overo)", emoji: "🐎", rareza: "epica", probabilidad: 2, bonus: { tipo: "salto", valor: 3 } },
+            { nombre: "Tobiano", emoji: "🐎", rareza: "epica", probabilidad: 2, bonus: { tipo: "galope", valor: 3 } },
+            { nombre: "Apaloosa (manchado)", emoji: "🌈", rareza: "legendaria", probabilidad: 2, bonus: { tipo: "salto", valor: 4, secundario: "galope", valor2: 3 } },
+            { nombre: "Blanco puro", emoji: "✨", rareza: "legendaria", probabilidad: 1.5, bonus: { tipo: "temperamento", valor: 5, todos: 3 } },
+            { nombre: "Manchado (Leopardo)", emoji: "🐎", rareza: "legendaria", probabilidad: 1, bonus: { tipo: "salto", valor: 5 } },
+            { nombre: "Atigrado (Brindle)", emoji: "🐎", rareza: "mitica", probabilidad: 0.5, bonus: { tipo: "todos", valor: 2, temperamento: 10 } }
+        ];
+
+        function asignarCapa() {
+            const rand = Math.random() * 100;
+            let acumulado = 0;
+            for (let capa of capas) {
+                acumulado += capa.probabilidad;
+                if (rand < acumulado) return JSON.parse(JSON.stringify(capa));
+            }
+            return capas[0];
+        }
+
+        function aplicarBonus(caballo, capa) {
+            const bonus = capa.bonus;
+            if (bonus.tipo === "aleatorio") {
+                const habs = ["galope", "trote", "salto", "doma", "caracter"];
+                const hab = habs[Math.floor(Math.random() * habs.length)];
+                caballo.habilidades[hab] = Math.min(caballo.maximos[hab], caballo.habilidades[hab] + bonus.valor);
+            } else if (bonus.tipo === "aleatorio2") {
+                const habs = ["galope", "trote", "salto", "doma", "caracter"];
+                const hab1 = habs[Math.floor(Math.random() * habs.length)];
+                let hab2;
+                do { hab2 = habs[Math.floor(Math.random() * habs.length)]; } while (hab2 === hab1);
+                caballo.habilidades[hab1] = Math.min(caballo.maximos[hab1], caballo.habilidades[hab1] + bonus.valor);
+                caballo.habilidades[hab2] = Math.min(caballo.maximos[hab2], caballo.habilidades[hab2] + bonus.valor);
+            } else if (bonus.tipo === "galope") {
+                caballo.habilidades.galope = Math.min(caballo.maximos.galope, caballo.habilidades.galope + bonus.valor);
+                if (bonus.secundario === "resistencia") {
+                    caballo.genesBase.temperamento += bonus.valor2;
+                } else if (bonus.secundario) {
+                    caballo.habilidades[bonus.secundario] = Math.min(caballo.maximos[bonus.secundario], caballo.habilidades[bonus.secundario] + bonus.valor2);
+                }
+            } else if (bonus.tipo === "trote") {
+                caballo.habilidades.trote = Math.min(caballo.maximos.trote, caballo.habilidades.trote + bonus.valor);
+                if (bonus.secundario) {
+                    caballo.habilidades[bonus.secundario] = Math.min(caballo.maximos[bonus.secundario], caballo.habilidades[bonus.secundario] + bonus.valor2);
+                }
+            } else if (bonus.tipo === "salto") {
+                caballo.habilidades.salto = Math.min(caballo.maximos.salto, caballo.habilidades.salto + bonus.valor);
+                if (bonus.secundario) {
+                    caballo.habilidades[bonus.secundario] = Math.min(caballo.maximos[bonus.secundario], caballo.habilidades[bonus.secundario] + bonus.valor2);
+                }
+            } else if (bonus.tipo === "doma") {
+                caballo.habilidades.doma = Math.min(caballo.maximos.doma, caballo.habilidades.doma + bonus.valor);
+                if (bonus.secundario) {
+                    caballo.habilidades[bonus.secundario] = Math.min(caballo.maximos[bonus.secundario], caballo.habilidades[bonus.secundario] + bonus.valor2);
+                }
+            } else if (bonus.tipo === "caracter") {
+                caballo.habilidades.caracter = Math.min(caballo.maximos.caracter, caballo.habilidades.caracter + bonus.valor);
+            } else if (bonus.tipo === "temperamento") {
+                caballo.genesBase.temperamento += bonus.valor;
+            } else if (bonus.tipo === "todos") {
+                for (let hab of ["galope", "trote", "salto", "doma", "caracter"]) {
+                    caballo.habilidades[hab] = Math.min(caballo.maximos[hab], caballo.habilidades[hab] + bonus.valor);
+                }
+                if (bonus.temperamento) caballo.genesBase.temperamento += bonus.temperamento;
+            }
+            return caballo;
+        }
+
         // ==================== ESTADO GLOBAL ====================
         let caballos = [];
         let npcsHaras = [];
@@ -738,8 +823,8 @@
         let misionActual = null;
         let nivelNPC = 1;
         let diasGlobales = 1;
-        let horaGlobal = 8; // empieza a las 8:00
-        let estacionActual = 0; // 0: primavera, 1: verano, 2: otoño, 3: invierno
+        let horaGlobal = 8;
+        let estacionActual = 0;
         const estaciones = ["Primavera", "Verano", "Otoño", "Invierno"];
         const DIAS_POR_ESTACION = 90;
 
@@ -757,13 +842,10 @@
         function randomFloat(min, max) { return Math.random() * (max - min) + min; }
         function generarSexo() { return Math.random() < 0.5 ? 'Macho' : 'Hembra'; }
         function generarNombre(sexo, esNPC = false) {
-            const nombresMasculinos = ["Sparky","Trueno","Rayo","Relámpago","Viento","Sol","Duende","Fuego","Acero","Brío"];
-            const nombresFemeninos = ["Luna","Brisa","Estrella","Canela","Zafiro","Nube","Pampa","Aurora","Galaxia","Perla"];
             const lista = sexo === 'Macho' ? nombresMasculinos : nombresFemeninos;
             return lista[Math.floor(Math.random() * lista.length)];
         }
         function generarRazasAleatorias() {
-            const razasDisponibles = ["Criollo","Árabe","Pura Sangre","Cuarto de Milla","Appaloosa","Frisón","Andaluz","Mustang"];
             if (Math.random() < 0.5) {
                 const raza = razasDisponibles[Math.floor(Math.random() * razasDisponibles.length)];
                 return { [raza]: 100 };
@@ -789,60 +871,25 @@
             return Object.values(caballo.genesHabilidad).reduce((a, b) => a + b, 0).toFixed(1);
         }
 
-        // ==================== FUNCIONES DE TIEMPO ====================
-        function avanzarTiempo(horas) {
-            for (let i = 0; i < horas; i++) {
-                horaGlobal++;
-                if (horaGlobal >= 24) {
-                    horaGlobal = 0;
-                    diasGlobales++;
-                    // Cambio de estación cada 90 días
-                    if (diasGlobales % DIAS_POR_ESTACION === 0) {
-                        estacionActual = (estacionActual + 1) % 4;
-                    }
-                }
-            }
-            actualizarRelojUI();
-        }
-
-        function actualizarRelojUI() {
-            const horaStr = horaGlobal.toString().padStart(2, '0') + ':00';
-            document.getElementById('fechaDisplay').innerText = `Día ${diasGlobales}, ${horaStr}`;
-            document.getElementById('estacionDisplay').innerText = estaciones[estacionActual];
-        }
-
-        // ==================== CAPAS (simplificado para este ejemplo) ====================
-        const capas = [
-            { nombre: "Castaño", emoji: "🟤", rareza: "comun", probabilidad: 20, bonus: { tipo: "aleatorio", valor: 1 } },
-            { nombre: "Negro", emoji: "⚫", rareza: "comun", probabilidad: 12, bonus: { tipo: "doma", valor: 1 } }
-        ];
-
-        function asignarCapa() {
-            const rand = Math.random() * 100;
-            let acumulado = 0;
-            for (let capa of capas) {
-                acumulado += capa.probabilidad;
-                if (rand < acumulado) return JSON.parse(JSON.stringify(capa));
-            }
-            return capas[0];
-        }
-
-        function aplicarBonus(caballo, capa) {
-            // simplificado
-            return caballo;
-        }
-
-        // ==================== CREAR CABALLO CON RELOJ PROPIO ====================
+        // Crear caballo (con capa)
         function crearCaballo(nombre, sexo, razas, edad = 0, energia = 50, animo = 50, salud = 100,
                               genesBase = null, genesHabilidad = null, blupEntrenamiento = 0, blupCarreras = 0,
                               esNPC = false, gestacion = null, descansoParto = 0, enVenta = false, precioVenta = null,
                               padreNombre = null, madreNombre = null, haras = null) {
             if (!genesBase) genesBase = { temperamento: randomInt(1, 100) };
             if (!genesHabilidad) {
-                genesHabilidad = {
-                    galope: randomInt(1, 10), trote: randomInt(1, 10), salto: randomInt(1, 10),
-                    doma: randomInt(1, 10), caracter: randomInt(1, 10)
-                };
+                if (esNPC) {
+                    let maxGen = 30 + nivelNPC * 5;
+                    genesHabilidad = {
+                        galope: randomInt(1, maxGen), trote: randomInt(1, maxGen), salto: randomInt(1, maxGen),
+                        doma: randomInt(1, maxGen), caracter: randomInt(1, maxGen)
+                    };
+                } else {
+                    genesHabilidad = {
+                        galope: randomInt(1, 10), trote: randomInt(1, 10), salto: randomInt(1, 10),
+                        doma: randomInt(1, 10), caracter: randomInt(1, 10)
+                    };
+                }
             }
             const maximos = {
                 galope: genesHabilidad.galope * 10,
@@ -862,10 +909,9 @@
             if (blupEntrenamiento > maxBlupEnt) blupEntrenamiento = maxBlupEnt;
             const blupTotal = blupEntrenamiento + blupCarreras;
 
-            // Asignar capa (simplificado)
+            // Asignar capa
             const capa = asignarCapa();
-
-            return {
+            const caballoBase = {
                 nombre,
                 nombreEditable: nombre,
                 sexo, razas, edad, energia, animo, salud,
@@ -885,6 +931,7 @@
                 imagenSeed: encodeURIComponent(nombre + (haras || '')),
                 capa: capa
             };
+            return aplicarBonus(caballoBase, capa);
         }
 
         // Caballo inicial (hembra)
@@ -896,6 +943,27 @@
                                          "Desconocido","Desconocido","Jugador");
             caballos.push(inicial);
         })();
+
+        // ==================== FUNCIONES DE TIEMPO ====================
+        function avanzarTiempo(horas) {
+            for (let i = 0; i < horas; i++) {
+                horaGlobal++;
+                if (horaGlobal >= 24) {
+                    horaGlobal = 0;
+                    diasGlobales++;
+                    if (diasGlobales % DIAS_POR_ESTACION === 0) {
+                        estacionActual = (estacionActual + 1) % 4;
+                    }
+                }
+            }
+            actualizarRelojUI();
+        }
+
+        function actualizarRelojUI() {
+            const horaStr = horaGlobal.toString().padStart(2, '0') + ':00';
+            document.getElementById('fechaDisplay').innerText = `Día ${diasGlobales}, ${horaStr}`;
+            document.getElementById('estacionDisplay').innerText = estaciones[estacionActual];
+        }
 
         // ==================== FUNCIONES DE ACCIÓN CON RELOJ ====================
         function puedeRealizarAccion(caballo, accion) {
@@ -921,7 +989,7 @@
         // ==================== ACCIONES DE CUIDADO ====================
         function alimentar(caballo) {
             if (!puedeRealizarAccion(caballo, 'alimentar')) {
-                alert(`Debes esperar ${tiempoRestante(caballo, 'alimentar')}h para volver a alimentar.`);
+                alert(`Debes esperar ${tiempoRestante(caballo, 'alimentar')}h.`);
                 return false;
             }
             if (inventario.zanahoria <= 0) { alert("No tienes zanahorias."); return false; }
@@ -936,7 +1004,7 @@
 
         function beber(caballo) {
             if (!puedeRealizarAccion(caballo, 'beber')) {
-                alert(`Debes esperar ${tiempoRestante(caballo, 'beber')}h para volver a dar agua.`);
+                alert(`Debes esperar ${tiempoRestante(caballo, 'beber')}h.`);
                 return false;
             }
             if (inventario.agua <= 0) { alert("No tienes agua."); return false; }
@@ -950,7 +1018,7 @@
 
         function acariciar(caballo) {
             if (!puedeRealizarAccion(caballo, 'acariciar')) {
-                alert(`Debes esperar ${tiempoRestante(caballo, 'acariciar')}h para volver a acariciar.`);
+                alert(`Debes esperar ${tiempoRestante(caballo, 'acariciar')}h.`);
                 return false;
             }
             caballo.animo = Math.min(100, caballo.animo + 15);
@@ -963,7 +1031,7 @@
 
         function darTrigo(caballo) {
             if (!puedeRealizarAccion(caballo, 'trigo')) {
-                alert(`Debes esperar ${tiempoRestante(caballo, 'trigo')}h para volver a dar trigo.`);
+                alert(`Debes esperar ${tiempoRestante(caballo, 'trigo')}h.`);
                 return false;
             }
             if (inventario.trigo <= 0) { alert("No tienes trigo."); return false; }
@@ -982,10 +1050,10 @@
             let html = '';
             caballos.forEach((c,i) => {
                 const imgUrl = `https://avatars.dicebear.com/api/avataaars/${c.imagenSeed}.svg?m=10&options[accessories][]=&options[top][]=shortHair&options[facialHair][]=&options[clothes][]=blazer&options[eyes][]=default&options[eyebrows][]=default&options[mouth][]=default&options[skin][]=light`;
-                const tiempoAlimentar = tiempoRestante(c, 'alimentar');
-                const tiempoBeber = tiempoRestante(c, 'beber');
-                const tiempoAcariciar = tiempoRestante(c, 'acariciar');
-                const tiempoTrigo = tiempoRestante(c, 'trigo');
+                const tAlim = tiempoRestante(c, 'alimentar');
+                const tBeb = tiempoRestante(c, 'beber');
+                const tAcar = tiempoRestante(c, 'acariciar');
+                const tTrig = tiempoRestante(c, 'trigo');
                 html += `
                     <div class="caballo-item">
                         <div class="caballo-item-avatar">
@@ -993,21 +1061,21 @@
                         </div>
                         <div class="caballo-item-info">
                             <input type="text" value="${c.nombreEditable}" data-index="${i}" class="edit-nombre">
-                            <span class="caballo-item-sexo">${c.sexo}</span>
+                            <span class="caballo-item-sexo">${c.sexo} ${c.capa.emoji}</span>
                         </div>
                         <div>
-                            <small>🍎 ${tiempoAlimentar>0?tiempoAlimentar+'h':'✔'}</small>
-                            <small>💧 ${tiempoBeber>0?tiempoBeber+'h':'✔'}</small>
-                            <small>🖐️ ${tiempoAcariciar>0?tiempoAcariciar+'h':'✔'}</small>
-                            <small>🌾 ${tiempoTrigo>0?tiempoTrigo+'h':'✔'}</small>
+                            <small>🍎 ${tAlim>0?tAlim+'h':'✔'}</small>
+                            <small>💧 ${tBeb>0?tBeb+'h':'✔'}</small>
+                            <small>🖐️ ${tAcar>0?tAcar+'h':'✔'}</small>
+                            <small>🌾 ${tTrig>0?tTrig+'h':'✔'}</small>
                         </div>
                         <button onclick="verFicha(${i})">🔍 Ver</button>
                         <button onclick="seleccionarPadreLista(${i})" ${c.sexo!=='Macho'?'disabled':''}>🐴 Padre</button>
                         <button onclick="seleccionarMadreLista(${i})" ${c.sexo!=='Hembra'?'disabled':''}>🐴 Madre</button>
-                        <button onclick="alimentarHandler(${i})" ${tiempoAlimentar>0?'disabled':''}>🍎 Comer</button>
-                        <button onclick="beberHandler(${i})" ${tiempoBeber>0?'disabled':''}>💧 Beber</button>
-                        <button onclick="acariciarHandler(${i})" ${tiempoAcariciar>0?'disabled':''}>🖐️ Acariciar</button>
-                        <button onclick="darTrigoHandler(${i})" ${tiempoTrigo>0?'disabled':''}>🌾 Trigo</button>
+                        <button onclick="alimentarHandler(${i})" ${tAlim>0?'disabled':''}>🍎 Comer</button>
+                        <button onclick="beberHandler(${i})" ${tBeb>0?'disabled':''}>💧 Beber</button>
+                        <button onclick="acariciarHandler(${i})" ${tAcar>0?'disabled':''}>🖐️ Acariciar</button>
+                        <button onclick="darTrigoHandler(${i})" ${tTrig>0?'disabled':''}>🌾 Trigo</button>
                     </div>
                 `;
             });
@@ -1022,9 +1090,9 @@
         function beberHandler(i) { if (beber(caballos[i])) renderListaResumida(); }
         function acariciarHandler(i) { if (acariciar(caballos[i])) renderListaResumida(); }
         function darTrigoHandler(i) { if (darTrigo(caballos[i])) renderListaResumida(); }
-        function seleccionarPadreLista(i) { padreIdx = i; renderListaResumida(); }
-        function seleccionarMadreLista(i) { madreIdx = i; renderListaResumida(); }
-        function verFicha(i) { alert("Ficha de " + caballos[i].nombreEditable); }
+        function seleccionarPadreLista(i) { padreIdx = i; renderListaResumida(); actualizarInfoBarras(); }
+        function seleccionarMadreLista(i) { madreIdx = i; renderListaResumida(); actualizarInfoBarras(); }
+        function verFicha(i) { alert("Ficha completa de " + caballos[i].nombreEditable); }
 
         // ==================== AVANZAR TIEMPO ====================
         function pasarHoras(horas) {
@@ -1032,7 +1100,12 @@
             renderListaResumida();
         }
 
-        // ==================== INICIALIZACIÓN ====================
+        // ==================== UI ====================
+        function actualizarInfoBarras() {
+            document.getElementById('padreDisplay').innerText = padreIdx !== null ? `${caballos[padreIdx].nombreEditable} (${caballos[padreIdx].sexo})` : '(ninguno)';
+            document.getElementById('madreDisplay').innerText = madreIdx !== null ? `${caballos[madreIdx].nombreEditable} (${caballos[madreIdx].sexo})` : '(ninguna)';
+        }
+
         function actualizarRecursosDisplay() {
             document.getElementById('dineroDisplay').innerText = dinero;
             document.getElementById('zanahoriasDisplay').innerText = inventario.zanahoria;
@@ -1042,11 +1115,17 @@
             document.getElementById('nivelEstablo').innerText = nivelEstablo;
             document.getElementById('nivelPista').innerText = nivelPista;
             document.getElementById('nivelClinica').innerText = nivelClinica;
-            document.getElementById('padreDisplay').innerText = padreIdx !== null ? `${caballos[padreIdx].nombreEditable} (${caballos[padreIdx].sexo})` : '(ninguno)';
-            document.getElementById('madreDisplay').innerText = madreIdx !== null ? `${caballos[madreIdx].nombreEditable} (${caballos[madreIdx].sexo})` : '(ninguna)';
         }
 
-        function render() { renderListaResumida(); actualizarRecursosDisplay(); }
+        function render() {
+            renderListaResumida();
+            actualizarRecursosDisplay();
+            actualizarInfoBarras();
+        }
+
+        // ==================== INICIALIZACIÓN ====================
+        actualizarRelojUI();
+        render();
 
         // ==================== EVENTOS DE PESTAÑAS ====================
         document.getElementById('tabGanaderia').addEventListener('click', () => {
@@ -1087,22 +1166,47 @@
             document.getElementById('contentSementales').classList.add('active');
         });
 
-        // Botones de tiempo
+        // Botones de controles
+        document.getElementById('btnComprarCaballo').addEventListener('click', () => {
+            if (dinero < PRECIO_CABALLO) { alert("Dinero insuficiente"); return; }
+            dinero -= PRECIO_CABALLO;
+            const sexo = generarSexo();
+            const nombre = generarNombre(sexo, false);
+            const razas = generarRazasAleatorias();
+            const edad = randomInt(2, 10);
+            const genesBase = { temperamento: randomInt(1, 100) };
+            const genesHabilidad = {
+                galope: randomInt(1,3), trote: randomInt(1,3), salto: randomInt(1,3),
+                doma: randomInt(1,3), caracter: randomInt(1,3)
+            };
+            const blupEnt = randomInt(10,30);
+            const nuevo = crearCaballo(nombre, sexo, razas, edad, 70,70,100,
+                                       genesBase, genesHabilidad, blupEnt, 0, false);
+            caballos.push(nuevo);
+            actualizarRecursosDisplay();
+            render();
+        });
+        document.getElementById('btnVenderEstiercol').addEventListener('click', () => {
+            if (estiercol <= 0) { alert("No hay estiércol"); return; }
+            dinero += estiercol * PRECIO_VENTA_ESTIERCOL;
+            estiercol = 0;
+            actualizarRecursosDisplay();
+        });
+        document.getElementById('btnCruzar').addEventListener('click', () => {
+            alert("Función de cruce no implementada en esta versión.");
+        });
+        document.getElementById('btnCorrer').addEventListener('click', () => {
+            alert("Función de carreras no implementada en esta versión.");
+        });
         document.getElementById('btnPasar6h').addEventListener('click', () => pasarHoras(6));
         document.getElementById('btnPasar12h').addEventListener('click', () => pasarHoras(12));
         document.getElementById('btnPasar24h').addEventListener('click', () => pasarHoras(24));
-
-        // Botones simulados (para que no den error)
-        document.getElementById('btnComprarCaballo').addEventListener('click', () => alert("Función de compra no implementada en demo"));
-        document.getElementById('btnVenderEstiercol').addEventListener('click', () => alert("Función no implementada"));
-        document.getElementById('btnCruzar').addEventListener('click', () => alert("Función no implementada"));
-        document.getElementById('btnCorrer').addEventListener('click', () => alert("Función no implementada"));
-        document.getElementById('btnGuardar').addEventListener('click', () => alert("Función no implementada"));
-        document.getElementById('btnCargar').addEventListener('click', () => alert("Función no implementada"));
-
-        // Inicializar
-        actualizarRelojUI();
-        render();
+        document.getElementById('btnGuardar').addEventListener('click', () => {
+            alert("Función de guardado no implementada en esta versión.");
+        });
+        document.getElementById('btnCargar').addEventListener('click', () => {
+            alert("Función de carga no implementada en esta versión.");
+        });
     </script>
 </body>
 </html>
