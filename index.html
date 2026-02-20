@@ -171,3 +171,307 @@
     </script>
 </body>
 </html>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Haras Soñado · Fase 2</title>
+    <style>
+        /* Estilos base */
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background: linear-gradient(145deg, #1d4e2b 0%, #2a6e3a 100%);
+            padding: 20px;
+            color: #f5f0d7;
+        }
+        h1 {
+            text-align: center;
+            color: #ffd966;
+            margin-bottom: 20px;
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .tab-button {
+            background: #5a3e2b;
+            border: 2px solid #b8860b;
+            color: #ffd966;
+            padding: 10px 30px;
+            border-radius: 40px;
+            cursor: pointer;
+        }
+        .tab-button.active {
+            background: #b8860b;
+            color: #1f3f23;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .controls {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 60px;
+        }
+        button {
+            background: #8b5a2b;
+            border: 2px solid #e0b87b;
+            color: #fff3e0;
+            padding: 10px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+        }
+        button:disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .info-bar {
+            background: #3e2b1f;
+            padding: 15px;
+            border-radius: 50px;
+            margin-bottom: 25px;
+            border: 2px solid #b8860b;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .resource {
+            background: #5a3e2b;
+            padding: 5px 20px;
+            border-radius: 40px;
+            border: 1px solid #d4a373;
+        }
+        .caballos-lista {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .caballo-item {
+            background: #3b6b3f;
+            border: 2px solid #c9a45b;
+            border-radius: 50px;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .caballo-item-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #2d4a31;
+            border: 2px solid #ffd966;
+            overflow: hidden;
+        }
+        .caballo-item-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .caballo-item-info {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .caballo-item-nombre {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #ffd966;
+        }
+        .caballo-item-sexo {
+            background: #3e2b1f;
+            padding: 5px 15px;
+            border-radius: 30px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🐴 MI HARAS SOÑADO · FASE 2</h1>
+
+    <div class="tabs">
+        <button class="tab-button active" data-tab="ganaderia">Ganadería</button>
+        <button class="tab-button" data-tab="tienda">Tienda</button>
+        <button class="tab-button" data-tab="mejoras">Mejoras</button>
+        <button class="tab-button" data-tab="rankings">Rankings</button>
+        <button class="tab-button" data-tab="mercado">Mercado</button>
+        <button class="tab-button" data-tab="sementales">Sementales</button>
+    </div>
+
+    <!-- Ganadería -->
+    <div class="tab-content active" id="ganaderia">
+        <div class="controls">
+            <button id="btnComprarCaballo">🌟 Comprar Caballo (500💰)</button>
+            <button id="btnVenderEstiercol">💩 Vender Estiércol (2💰 c/u)</button>
+            <button disabled>💞 Cruzar</button>
+            <button disabled>🏆 Carrera</button>
+            <button disabled>⏩ +6h</button>
+            <button disabled>⏩ +12h</button>
+            <button disabled>⏩ +24h</button>
+        </div>
+
+        <div class="info-bar">
+            <div class="resource">💰 Dinero: <span id="dinero">1000</span></div>
+            <div class="resource">🥕 Zanahorias: <span id="zanahorias">5</span></div>
+            <div class="resource">💧 Agua: <span id="agua">5</span></div>
+            <div class="resource">🌾 Trigo: <span id="trigo">0</span></div>
+            <div class="resource">💩 Estiércol: <span id="estiercol">0</span></div>
+        </div>
+
+        <div id="caballosLista" class="caballos-lista"></div>
+    </div>
+
+    <!-- Resto de pestañas vacías -->
+    <div class="tab-content" id="tienda"><h2 style="text-align:center;">🛒 Tienda (próximamente)</h2></div>
+    <div class="tab-content" id="mejoras"><h2 style="text-align:center;">🔧 Mejoras (próximamente)</h2></div>
+    <div class="tab-content" id="rankings"><h2 style="text-align:center;">🏆 Rankings (próximamente)</h2></div>
+    <div class="tab-content" id="mercado"><h2 style="text-align:center;">🐴 Mercado (próximamente)</h2></div>
+    <div class="tab-content" id="sementales"><h2 style="text-align:center;">🐴 Sementales (próximamente)</h2></div>
+
+    <script>
+        // ==================== DATOS DE PRUEBA ====================
+        let caballos = [];
+        let dinero = 1000;
+        let estiercol = 0;
+        let inventario = { zanahoria: 5, agua: 5, trigo: 0 };
+
+        // Nombres para generar
+        const nombresMasculinos = ["Sparky","Trueno","Rayo","Relámpago","Viento","Sol"];
+        const nombresFemeninos = ["Luna","Brisa","Estrella","Canela","Zafiro","Nube"];
+        const razas = ["Criollo","Árabe","Pura Sangre","Cuarto de Milla","Appaloosa"];
+
+        function randomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function generarSexo() {
+            return Math.random() < 0.5 ? 'Macho' : 'Hembra';
+        }
+
+        function generarNombre(sexo) {
+            const lista = sexo === 'Macho' ? nombresMasculinos : nombresFemeninos;
+            return lista[Math.floor(Math.random() * lista.length)];
+        }
+
+        function generarRaza() {
+            return razas[Math.floor(Math.random() * razas.length)];
+        }
+
+        // Crear caballo simple (sin capas ni genes complejos)
+        function crearCaballoSimple() {
+            const sexo = generarSexo();
+            const nombre = generarNombre(sexo);
+            const raza = generarRaza();
+            // Avatar de prueba (usamos una imagen genérica)
+            const imagenSeed = encodeURIComponent(nombre);
+            const imgUrl = `https://avatars.dicebear.com/api/avataaars/${imagenSeed}.svg?m=10&options[top][]=shortHair&options[clothes][]=blazer&options[eyes][]=default&options[eyebrows][]=default&options[mouth][]=default&options[skin][]=light`;
+            return {
+                nombreEditable: nombre,
+                sexo: sexo,
+                raza: raza,
+                imagenUrl: imgUrl
+            };
+        }
+
+        // Renderizar lista
+        function renderLista() {
+            const container = document.getElementById('caballosLista');
+            let html = '';
+            caballos.forEach(c => {
+                html += `
+                    <div class="caballo-item">
+                        <div class="caballo-item-avatar">
+                            <img src="${c.imagenUrl}" alt="${c.nombreEditable}">
+                        </div>
+                        <div class="caballo-item-info">
+                            <span class="caballo-item-nombre">${c.nombreEditable}</span>
+                            <span class="caballo-item-sexo">${c.sexo} · ${c.raza}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            if (caballos.length === 0) {
+                html = '<p style="text-align:center;">No tienes caballos. ¡Compra uno!</p>';
+            }
+            container.innerHTML = html;
+        }
+
+        // Actualizar recursos en pantalla
+        function actualizarUI() {
+            document.getElementById('dinero').innerText = dinero;
+            document.getElementById('zanahorias').innerText = inventario.zanahoria;
+            document.getElementById('agua').innerText = inventario.agua;
+            document.getElementById('trigo').innerText = inventario.trigo;
+            document.getElementById('estiercol').innerText = estiercol;
+        }
+
+        // Comprar caballo
+        document.getElementById('btnComprarCaballo').addEventListener('click', () => {
+            if (dinero < 500) {
+                alert('Dinero insuficiente');
+                return;
+            }
+            dinero -= 500;
+            const nuevoCaballo = crearCaballoSimple();
+            caballos.push(nuevoCaballo);
+            renderLista();
+            actualizarUI();
+        });
+
+        // Vender estiércol (por ahora solo resta)
+        document.getElementById('btnVenderEstiercol').addEventListener('click', () => {
+            if (estiercol <= 0) {
+                alert('No tienes estiércol');
+                return;
+            }
+            dinero += estiercol * 2;
+            estiercol = 0;
+            actualizarUI();
+        });
+
+        // Lógica de pestañas
+        document.querySelectorAll('.tab-button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                document.getElementById(btn.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Inicializar con un caballo de ejemplo para probar
+        (function init() {
+            const ejemplo = {
+                nombreEditable: "Sparky",
+                sexo: "Hembra",
+                raza: "Criollo",
+                imagenUrl: "https://avatars.dicebear.com/api/avataaars/Sparky.svg?m=10&options[top][]=shortHair&options[clothes][]=blazer&options[eyes][]=default&options[eyebrows][]=default&options[mouth][]=default&options[skin][]=light"
+            };
+            caballos.push(ejemplo);
+            renderLista();
+            actualizarUI();
+        })();
+    </script>
+</body>
+</html>
